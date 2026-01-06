@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCourseStore } from '@/stores/courses'
 import { useAuthStore } from '@/stores/auth'
+import AppLayout from '@/components/AppLayout.vue'
 import CourseCard from '@/components/CourseCard.vue'
 import CourseModal from '@/components/CourseModal.vue'
 
@@ -60,48 +61,38 @@ function handleCloseModal() {
 function handleViewCourse(id: string) {
   router.push(`/courses/${id}`)
 }
-
-function handleLogout() {
-  authStore.logout()
-  router.push('/login')
-}
 </script>
 
 <template>
-  <div class="courses-page">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-content">
-        <h1>🎓 Riwi Courses</h1>
-        <div class="user-info">
-          <span>{{ authStore.user?.fullName }}</span>
-          <span v-if="authStore.isAdmin" class="badge-admin">Admin</span>
-          <button class="btn-logout" @click="handleLogout">Cerrar Sesión</button>
+  <AppLayout>
+    <div class="courses-page">
+      <!-- Page Header -->
+      <header class="page-header">
+        <div>
+          <h1>📚 Courses</h1>
+          <p class="subtitle">Manage your courses and lessons</p>
         </div>
-      </div>
-    </header>
+        <button class="btn-create" @click="handleCreateCourse">
+          + New Course
+        </button>
+      </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
       <!-- Filters -->
       <div class="filters-section">
         <div class="search-box">
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="🔍 Buscar cursos..."
+            placeholder="🔍 Search courses..."
           />
         </div>
         <div class="filter-status">
           <select v-model="statusFilter">
-            <option value="">Todos los estados</option>
-            <option value="Draft">Borrador</option>
-            <option value="Published">Publicado</option>
+            <option value="">All Status</option>
+            <option value="Draft">Draft</option>
+            <option value="Published">Published</option>
           </select>
         </div>
-        <button class="btn-create" @click="handleCreateCourse">
-          + Nuevo Curso
-        </button>
       </div>
 
       <!-- Error Message -->
@@ -111,7 +102,8 @@ function handleLogout() {
 
       <!-- Loading -->
       <div v-if="courseStore.loading" class="loading">
-        Cargando cursos...
+        <div class="spinner"></div>
+        <p>Loading courses...</p>
       </div>
 
       <!-- Course List -->
@@ -127,9 +119,10 @@ function handleLogout() {
 
       <!-- Empty State -->
       <div v-else class="empty-state">
-        <p>No se encontraron cursos</p>
+        <div class="empty-icon">📚</div>
+        <p>No courses found</p>
         <button class="btn-create" @click="handleCreateCourse">
-          Crear el primer curso
+          Create your first course
         </button>
       </div>
 
@@ -139,20 +132,20 @@ function handleLogout() {
           :disabled="courseStore.currentPage === 1"
           @click="changePage(courseStore.currentPage - 1)"
         >
-          ← Anterior
+          ← Previous
         </button>
         <span>
-          Página {{ courseStore.currentPage }} de {{ courseStore.totalPages }}
-          ({{ courseStore.totalCount }} cursos)
+          Page {{ courseStore.currentPage }} of {{ courseStore.totalPages }}
+          ({{ courseStore.totalCount }} courses)
         </span>
         <button
           :disabled="courseStore.currentPage === courseStore.totalPages"
           @click="changePage(courseStore.currentPage + 1)"
         >
-          Siguiente →
+          Next →
         </button>
       </div>
-    </main>
+    </div>
 
     <!-- Create/Edit Modal -->
     <CourseModal
@@ -160,68 +153,50 @@ function handleLogout() {
       :course="editingCourse"
       @close="handleCloseModal"
     />
-  </div>
+  </AppLayout>
 </template>
 
 <style scoped>
 .courses-page {
-  min-height: 100vh;
-  background: #f5f7fa;
-}
-
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
-  max-width: 1200px;
+  padding: 30px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  margin-bottom: 30px;
 }
 
-.header h1 {
+.page-header h1 {
+  font-size: 28px;
+  color: #1a1a2e;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  color: #666;
   margin: 0;
-  font-size: 24px;
+  font-size: 15px;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.badge-admin {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.btn-logout {
-  background: rgba(255, 255, 255, 0.2);
+.btn-create {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px 20px;
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .filters-section {
@@ -240,45 +215,32 @@ function handleLogout() {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   box-sizing: border-box;
+  background: white;
+  transition: all 0.3s;
 }
 
 .search-box input:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .filter-status select {
   padding: 12px 16px;
   border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   background: white;
   cursor: pointer;
+  min-width: 150px;
 }
 
 .filter-status select:focus {
   outline: none;
   border-color: #667eea;
-}
-
-.btn-create {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-create:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .courses-grid {
@@ -289,20 +251,45 @@ function handleLogout() {
 
 .loading,
 .empty-state {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 60px 20px;
   color: #666;
 }
 
-.empty-state .btn-create {
-  margin-top: 20px;
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  margin-bottom: 20px;
+  font-size: 16px;
 }
 
 .error-message {
   background: #fee;
   color: #c00;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -341,4 +328,3 @@ function handleLogout() {
   color: #666;
 }
 </style>
-
