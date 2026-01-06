@@ -34,18 +34,18 @@ function navigateToCourses() {
 
 <template>
   <AppLayout>
-    <div class="p-8 w-full">
+    <div class="p-4 md:p-8 w-full">
       <!-- Header -->
-      <header class="flex justify-between items-start mb-8">
+      <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 class="text-3xl font-bold text-slate-800">Dashboard</h1>
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Dashboard</h1>
           <p class="text-gray-500 mt-1">
             Welcome back, <strong>{{ authStore.user?.firstName }}</strong>! 👋
           </p>
         </div>
         <button
           @click="navigateToCourses"
-          class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all"
+          class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all text-center"
         >
           📚 Manage Courses
         </button>
@@ -71,54 +71,54 @@ function navigateToCourses() {
       <!-- Dashboard Content -->
       <div v-else class="space-y-8">
         <!-- Metrics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
-            <div class="flex items-center gap-5">
-              <div class="w-14 h-14 rounded-xl bg-indigo-100 flex items-center justify-center text-3xl">📚</div>
-              <div>
-                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.totalCourses }}</span>
-                <p class="text-gray-500 text-sm mt-1">Total Courses</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-5">
+              <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-indigo-100 flex items-center justify-center text-2xl md:text-3xl">📚</div>
+              <div class="text-center md:text-left">
+                <span class="text-2xl md:text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.totalCourses }}</span>
+                <p class="text-gray-500 text-xs md:text-sm mt-1">Total Courses</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
-            <div class="flex items-center gap-5">
-              <div class="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center text-3xl">✅</div>
-              <div>
-                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.publishedCourses }}</span>
-                <p class="text-gray-500 text-sm mt-1">Published</p>
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-5">
+              <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-100 flex items-center justify-center text-2xl md:text-3xl">✅</div>
+              <div class="text-center md:text-left">
+                <span class="text-2xl md:text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.publishedCourses }}</span>
+                <p class="text-gray-500 text-xs md:text-sm mt-1">Published</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
-            <div class="flex items-center gap-5">
-              <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center text-3xl">📝</div>
-              <div>
-                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.draftCourses }}</span>
-                <p class="text-gray-500 text-sm mt-1">Drafts</p>
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-5">
+              <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-amber-100 flex items-center justify-center text-2xl md:text-3xl">📝</div>
+              <div class="text-center md:text-left">
+                <span class="text-2xl md:text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.draftCourses }}</span>
+                <p class="text-gray-500 text-xs md:text-sm mt-1">Drafts</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
-            <div class="flex items-center gap-5">
-              <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-3xl">📖</div>
-              <div>
-                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.totalLessons }}</span>
-                <p class="text-gray-500 text-sm mt-1">Total Lessons</p>
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-3 md:gap-5">
+              <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-blue-100 flex items-center justify-center text-2xl md:text-3xl">📖</div>
+              <div class="text-center md:text-left">
+                <span class="text-2xl md:text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.totalLessons }}</span>
+                <p class="text-gray-500 text-xs md:text-sm mt-1">Total Lessons</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <!-- Course Distribution -->
-          <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
             <h3 class="text-lg font-semibold text-slate-800 mb-5">Course Distribution</h3>
-            <div class="flex items-center gap-8">
+            <div class="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
               <div class="relative w-36 h-36">
                 <svg viewBox="0 0 100 100" class="w-full h-full">
                   <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" stroke-width="20" />
@@ -151,7 +151,7 @@ function navigateToCourses() {
           </div>
 
           <!-- Quick Stats -->
-          <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
             <h3 class="text-lg font-semibold text-slate-800 mb-5">Quick Stats</h3>
             <div class="space-y-5">
               <div class="flex justify-between items-center pb-4 border-b border-gray-100">
@@ -184,7 +184,7 @@ function navigateToCourses() {
         </div>
 
         <!-- Recent Activity -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
           <div class="flex justify-between items-center mb-5">
             <h3 class="text-lg font-semibold text-slate-800">📅 Recent Activity</h3>
             <button @click="navigateToCourses" class="text-indigo-500 hover:text-indigo-600 font-medium text-sm">

@@ -16,180 +16,82 @@ async function handleSubmit() {
   })
 
   if (success) {
-    router.push('/courses')
+    router.push('/dashboard')
   }
+}
+
+function goToRegister() {
+  router.push('/register')
 }
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-card">
-      <h1>🎓 Riwi Courses</h1>
-      <h2>Iniciar Sesión</h2>
+  <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 flex items-center justify-center p-5">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <h1 class="text-4xl mb-2">🎓</h1>
+        <h2 class="text-2xl font-bold text-slate-800">Riwi Courses</h2>
+        <p class="text-gray-500 mt-2">Sign in to your account</p>
+      </div>
 
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="email">Email</label>
+      <!-- Form -->
+      <form @submit.prevent="handleSubmit" class="space-y-5">
+        <div>
+          <label for="email" class="block mb-2 text-gray-600 font-medium">Email</label>
           <input
             id="email"
             v-model="email"
             type="email"
-            placeholder="correo@ejemplo.com"
+            placeholder="admin@riwi.io"
             required
+            class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
         </div>
 
-        <div class="form-group">
-          <label for="password">Contraseña</label>
+        <div>
+          <label for="password" class="block mb-2 text-gray-600 font-medium">Password</label>
           <input
             id="password"
             v-model="password"
             type="password"
             placeholder="••••••••"
             required
+            class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
         </div>
 
-        <div v-if="authStore.error" class="error-message">
+        <div v-if="authStore.error" class="bg-red-50 text-red-600 p-3 rounded-xl text-center text-sm">
           {{ authStore.error }}
         </div>
 
-        <button type="submit" :disabled="authStore.loading" class="btn-primary">
-          {{ authStore.loading ? 'Cargando...' : 'Iniciar Sesión' }}
+        <button
+          type="submit"
+          :disabled="authStore.loading"
+          class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-lg rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+        >
+          {{ authStore.loading ? 'Signing in...' : 'Sign In' }}
         </button>
       </form>
 
-      <p class="register-link">
-        ¿No tienes cuenta?
-        <router-link to="/register">Regístrate aquí</router-link>
-      </p>
+      <!-- Footer -->
+      <div class="mt-8 text-center">
+        <p class="text-gray-500">
+          Don't have an account?
+          <button @click="goToRegister" class="text-indigo-500 font-semibold hover:underline ml-1">
+            Sign Up
+          </button>
+        </p>
+      </div>
 
-      <div class="demo-credentials">
-        <p><strong>Usuarios de prueba:</strong></p>
-        <p>Admin: admin@riwi.io / Admin123!</p>
-        <p>User: user@riwi.io / User123!</p>
+      <!-- Demo Credentials -->
+      <div class="mt-8 p-4 bg-gray-50 rounded-xl">
+        <p class="text-sm font-semibold text-gray-700 mb-2">Demo Credentials:</p>
+        <div class="text-sm text-gray-600 space-y-1">
+          <p><span class="font-medium">Admin:</span> admin@riwi.io / Admin123!</p>
+          <p><span class="font-medium">User:</span> user@riwi.io / User123!</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
-
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 400px;
-}
-
-h1 {
-  text-align: center;
-  color: #667eea;
-  margin-bottom: 10px;
-}
-
-h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-  font-weight: 500;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #555;
-  font-weight: 500;
-}
-
-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-
-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background: #fee;
-  color: #c00;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.register-link {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
-}
-
-.register-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
-
-.demo-credentials {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  font-size: 13px;
-  color: #666;
-}
-
-.demo-credentials p {
-  margin: 5px 0;
-}
-</style>
-

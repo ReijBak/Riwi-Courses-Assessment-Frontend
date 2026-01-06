@@ -54,198 +54,80 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="emit('close')">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>{{ lesson ? 'Editar Lección' : 'Nueva Lección' }}</h2>
-        <button class="btn-close" @click="emit('close')">×</button>
+  <div
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-5"
+    @click.self="emit('close')"
+  >
+    <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+      <!-- Header -->
+      <div class="flex justify-between items-center p-6 pb-0">
+        <h2 class="text-xl font-semibold text-slate-800">
+          {{ lesson ? 'Edit Lesson' : 'New Lesson' }}
+        </h2>
+        <button
+          @click="emit('close')"
+          class="text-3xl text-gray-400 hover:text-gray-600 leading-none"
+        >
+          ×
+        </button>
       </div>
 
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="title">Título de la Lección</label>
+      <!-- Form -->
+      <form @submit.prevent="handleSubmit" class="p-6">
+        <div class="mb-5">
+          <label for="title" class="block mb-2 text-gray-600 font-medium">
+            Lesson Title
+          </label>
           <input
             id="title"
             v-model="title"
             type="text"
-            placeholder="Ej: Introducción al tema"
+            placeholder="e.g., Introduction to the topic"
             required
             autofocus
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
         </div>
 
-        <div class="form-group">
-          <label for="order">Orden</label>
+        <div class="mb-6">
+          <label for="order" class="block mb-2 text-gray-600 font-medium">
+            Order
+          </label>
           <input
             id="order"
             v-model.number="order"
             type="number"
             min="1"
             required
+            class="w-32 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
-          <p class="hint">
-            El orden debe ser único dentro del curso.
-            {{ lesson ? '' : `Siguiente orden disponible: ${nextOrder}` }}
+          <p class="text-sm text-gray-400 mt-2">
+            Order must be unique within the course.
+            {{ lesson ? '' : `Next available: ${nextOrder}` }}
           </p>
         </div>
 
-        <div v-if="lessonStore.error" class="error-message">
+        <div v-if="lessonStore.error" class="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-center text-sm">
           {{ lessonStore.error }}
         </div>
 
-        <div class="modal-actions">
-          <button type="button" class="btn-cancel" @click="emit('close')">
-            Cancelar
+        <div class="flex gap-3 justify-end">
+          <button
+            type="button"
+            @click="emit('close')"
+            class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-600 font-medium hover:border-gray-300 transition-all"
+          >
+            Cancel
           </button>
           <button
             type="submit"
-            class="btn-submit"
             :disabled="lessonStore.loading || !title.trim()"
+            class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
           >
-            {{ lessonStore.loading ? 'Guardando...' : lesson ? 'Actualizar' : 'Crear' }}
+            {{ lessonStore.loading ? 'Saving...' : lesson ? 'Update' : 'Create' }}
           </button>
         </div>
       </form>
     </div>
   </div>
 </template>
-
-<style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 450px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 24px 0;
-}
-
-.modal-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: #999;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.btn-close:hover {
-  color: #333;
-}
-
-form {
-  padding: 24px;
-}
-
-.form-group {
-  margin-bottom: 24px;
-}
-
-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #555;
-  font-weight: 500;
-}
-
-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-input[type='number'] {
-  width: 120px;
-}
-
-.hint {
-  font-size: 13px;
-  color: #888;
-  margin: 8px 0 0;
-}
-
-.error-message {
-  background: #fee;
-  color: #c00;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-
-.btn-cancel {
-  padding: 12px 24px;
-  border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  background: white;
-  color: #666;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancel:hover {
-  border-color: #999;
-}
-
-.btn-submit {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-submit:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-</style>
-

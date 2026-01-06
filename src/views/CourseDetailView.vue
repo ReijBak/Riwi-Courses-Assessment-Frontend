@@ -81,73 +81,86 @@ function getNextOrder() {
 
 <template>
   <AppLayout>
-    <div class="course-detail-page">
+    <div class="p-4 md:p-8 w-full">
       <!-- Breadcrumb -->
-      <div class="breadcrumb">
-        <button class="btn-back" @click="goBack">← Back to Courses</button>
-      </div>
+      <button
+        @click="goBack"
+        class="text-indigo-500 hover:text-indigo-600 font-medium mb-4 md:mb-6 transition-colors text-sm md:text-base"
+      >
+        ← Back to Courses
+      </button>
 
       <!-- Loading -->
-      <div v-if="courseStore.loading && !courseStore.currentCourse" class="loading">
-        <div class="spinner"></div>
-        <p>Loading course...</p>
+      <div v-if="courseStore.loading && !courseStore.currentCourse" class="flex flex-col items-center justify-center py-20">
+        <div class="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-500">Loading course...</p>
       </div>
 
       <!-- Course Info -->
-      <div v-else-if="courseStore.currentCourse" class="course-info-section">
-        <div class="course-header">
-          <div>
-            <span :class="['status-badge', courseStore.currentCourse.status.toLowerCase()]">
+      <div v-else-if="courseStore.currentCourse" class="bg-white rounded-2xl p-4 md:p-8 shadow-sm mb-6 md:mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 md:gap-6">
+          <div class="w-full sm:w-auto">
+            <span
+              class="inline-block px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-semibold mb-3 md:mb-4"
+              :class="courseStore.currentCourse.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+            >
               {{ courseStore.currentCourse.status === 'Draft' ? '📝 Draft' : '✅ Published' }}
             </span>
-            <h1>{{ courseStore.currentCourse.title }}</h1>
-            <p class="course-meta">
+            <h1 class="text-xl md:text-3xl font-bold text-slate-800 mb-2 md:mb-3">{{ courseStore.currentCourse.title }}</h1>
+            <p class="text-gray-500 text-sm md:text-base">
               📖 {{ courseStore.currentCourse.totalLessons }} lessons •
               Last modified: {{ formatDate(courseStore.currentCourse.lastModified) }}
             </p>
           </div>
-          <div class="course-actions">
+          <div class="flex gap-3 w-full sm:w-auto">
             <button
               v-if="courseStore.currentCourse.status === 'Draft'"
-              class="btn-publish"
               @click="handlePublish"
+              class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all text-sm md:text-base"
             >
               🚀 Publish
             </button>
-            <button v-else class="btn-unpublish" @click="handleUnpublish">
+            <button
+              v-else
+              @click="handleUnpublish"
+              class="flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 bg-amber-400 text-slate-800 font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all text-sm md:text-base"
+            >
               📥 Unpublish
             </button>
           </div>
         </div>
 
-        <!-- Error from course store -->
-        <div v-if="courseStore.error" class="error-message">
+        <!-- Error -->
+        <div v-if="courseStore.error" class="bg-red-50 text-red-600 p-4 rounded-xl mt-6 text-center">
           {{ courseStore.error }}
         </div>
       </div>
 
       <!-- Lessons Section -->
-      <div class="lessons-section">
-        <div class="lessons-header">
-          <h2>📖 Lessons</h2>
-          <button class="btn-add-lesson" @click="handleCreateLesson">
+      <div class="bg-white rounded-2xl p-4 md:p-8 shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h2 class="text-xl md:text-2xl font-semibold text-slate-800">📖 Lessons</h2>
+          <button
+            @click="handleCreateLesson"
+            class="w-full sm:w-auto px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all text-sm md:text-base"
+          >
             + New Lesson
           </button>
         </div>
 
-        <!-- Error from lesson store -->
-        <div v-if="lessonStore.error" class="error-message">
+        <!-- Error -->
+        <div v-if="lessonStore.error" class="bg-red-50 text-red-600 p-4 rounded-xl mb-6 text-center">
           {{ lessonStore.error }}
         </div>
 
         <!-- Loading -->
-        <div v-if="lessonStore.loading && lessonStore.lessons.length === 0" class="loading">
-          <div class="spinner"></div>
-          <p>Loading lessons...</p>
+        <div v-if="lessonStore.loading && lessonStore.lessons.length === 0" class="flex flex-col items-center justify-center py-16">
+          <div class="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+          <p class="text-gray-500">Loading lessons...</p>
         </div>
 
         <!-- Lessons List -->
-        <div v-else-if="lessonStore.lessons.length > 0" class="lessons-list">
+        <div v-else-if="lessonStore.lessons.length > 0" class="space-y-3">
           <LessonCard
             v-for="lesson in lessonStore.lessons"
             :key="lesson.id"
@@ -159,13 +172,14 @@ function getNextOrder() {
         </div>
 
         <!-- Empty State -->
-        <div v-else class="empty-state">
-          <div class="empty-icon">📖</div>
-          <p>No lessons yet</p>
-          <p class="hint">
-            Add at least one lesson to publish this course
-          </p>
-          <button class="btn-add-lesson" @click="handleCreateLesson">
+        <div v-else class="text-center py-16">
+          <div class="text-6xl mb-4">📖</div>
+          <p class="text-gray-600 text-lg mb-2">No lessons yet</p>
+          <p class="text-gray-400 text-sm mb-6">Add at least one lesson to publish this course</p>
+          <button
+            @click="handleCreateLesson"
+            class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg"
+          >
             Create first lesson
           </button>
         </div>
@@ -182,211 +196,3 @@ function getNextOrder() {
     />
   </AppLayout>
 </template>
-
-<style scoped>
-.course-detail-page {
-  padding: 30px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.breadcrumb {
-  margin-bottom: 20px;
-}
-
-.btn-back {
-  background: none;
-  border: none;
-  color: #667eea;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 8px 0;
-  transition: color 0.3s;
-}
-
-.btn-back:hover {
-  color: #764ba2;
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  color: #666;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e0e0e0;
-  border-top-color: #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.course-info-section {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.course-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.status-badge.draft {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.published {
-  background: #d4edda;
-  color: #155724;
-}
-
-.course-info-section h1 {
-  margin: 0 0 12px 0;
-  color: #1a1a2e;
-  font-size: 28px;
-}
-
-.course-meta {
-  color: #666;
-  margin: 0;
-  font-size: 15px;
-}
-
-.course-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-publish,
-.btn-unpublish {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-publish {
-  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
-  color: white;
-}
-
-.btn-publish:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-}
-
-.btn-unpublish {
-  background: #ffc107;
-  color: #333;
-}
-
-.btn-unpublish:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-}
-
-.lessons-section {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.lessons-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.lessons-header h2 {
-  margin: 0;
-  color: #1a1a2e;
-  font-size: 22px;
-}
-
-.btn-add-lesson {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-add-lesson:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.lessons-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 50px 20px;
-  color: #666;
-}
-
-.empty-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-}
-
-.empty-state p {
-  margin: 0 0 8px;
-  font-size: 16px;
-}
-
-.hint {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 20px !important;
-}
-
-.error-message {
-  background: #fee;
-  color: #c00;
-  padding: 16px;
-  border-radius: 10px;
-  margin-top: 20px;
-  text-align: center;
-}
-</style>

@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+
+const isOpen = ref(false)
+const isMobile = ref(false)
 
 const menuItems = computed(() => [
   {
@@ -22,8 +25,35 @@ const menuItems = computed(() => [
   },
 ])
 
+function checkMobile() {
+  isMobile.value = window.innerWidth < 768
+  if (!isMobile.value) {
+    isOpen.value = false
+  }
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+
+function toggleSidebar() {
+  isOpen.value = !isOpen.value
+}
+
+function closeSidebar() {
+  if (isMobile.value) {
+    isOpen.value = false
+  }
+}
+
 function navigate(path: string) {
   router.push(path)
+  closeSidebar()
 }
 
 function handleLogout() {
@@ -33,11 +63,50 @@ function handleLogout() {
 </script>
 
 <template>
-  <aside class="w-64 h-screen bg-gradient-to-b from-slate-900 to-slate-800 fixed left-0 top-0 z-50 flex flex-col">
+  <!-- Mobile Header -->
+  <header v-if="isMobile" class="fixed top-0 left-0 right-0 h-16 bg-slate-900 z-40 flex items-center justify-between px-4">
+    <button
+      @click="toggleSidebar"
+      class="w-10 h-10 flex flex-col items-center justify-center gap-1.5 text-white"
+    >
+      <span class="w-6 h-0.5 bg-white transition-all" :class="{ 'rotate-45 translate-y-2': isOpen }"></span>
+      <span class="w-6 h-0.5 bg-white transition-all" :class="{ 'opacity-0': isOpen }"></span>
+      <span class="w-6 h-0.5 bg-white transition-all" :class="{ '-rotate-45 -translate-y-2': isOpen }"></span>
+    </button>
+    <h1 class="text-xl font-bold text-white">🎓 Riwi Courses</h1>
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
+      {{ authStore.user?.firstName?.charAt(0) || 'U' }}
+    </div>
+  </header>
+
+  <!-- Overlay for mobile -->
+  <div
+    v-if="isMobile && isOpen"
+    class="fixed inset-0 bg-black/50 z-40"
+    @click="closeSidebar"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside
+    class="h-screen bg-gradient-to-b from-slate-900 to-slate-800 fixed left-0 top-0 z-50 flex flex-col transition-transform duration-300"
+    :class="[
+      isMobile ? 'w-72' : 'w-64',
+      isMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'
+    ]"
+  >
     <!-- Header -->
-    <div class="p-6 border-b border-white/10">
-      <h1 class="text-2xl font-bold text-white">🎓 Riwi</h1>
-      <span class="text-indigo-400 text-sm font-medium ml-2">Courses</span>
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white">🎓 Riwi</h1>
+        <span class="text-indigo-400 text-sm font-medium">Courses</span>
+      </div>
+      <button
+        v-if="isMobile"
+        @click="closeSidebar"
+        class="text-white/70 hover:text-white text-2xl"
+      >
+        ×
+      </button>
     </div>
 
     <!-- Navigation -->
@@ -65,7 +134,7 @@ function handleLogout() {
           {{ authStore.user?.firstName?.charAt(0) || 'U' }}
         </div>
         <div class="flex flex-col">
-          <span class="text-white text-sm font-medium truncate max-w-[120px]">
+          <span class="text-white text-sm font-medium truncate max-w-28">
             {{ authStore.user?.fullName }}
           </span>
           <span

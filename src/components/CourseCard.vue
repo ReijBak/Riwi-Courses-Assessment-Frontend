@@ -39,176 +39,68 @@ function formatDate(dateString: string) {
 </script>
 
 <template>
-  <div class="course-card" @click="emit('view', course.id)">
-    <div class="card-header">
-      <span :class="['status-badge', course.status.toLowerCase()]">
-        {{ course.status === 'Draft' ? '📝 Borrador' : '✅ Publicado' }}
+  <div
+    @click="emit('view', course.id)"
+    class="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer relative"
+  >
+    <!-- Admin Badge -->
+    <div v-if="authStore.isAdmin" class="absolute -top-2 -right-2 px-2 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-[10px] font-semibold rounded-lg">
+      Admin
+    </div>
+
+    <!-- Status Badge -->
+    <div class="mb-3 md:mb-4">
+      <span
+        class="inline-block px-2.5 md:px-3 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium"
+        :class="course.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+      >
+        {{ course.status === 'Draft' ? '📝 Draft' : '✅ Published' }}
       </span>
     </div>
 
-    <h3 class="card-title">{{ course.title }}</h3>
+    <!-- Title -->
+    <h3 class="text-base md:text-lg font-semibold text-slate-800 mb-3 md:mb-4 line-clamp-2">{{ course.title }}</h3>
 
-    <div class="card-meta">
+    <!-- Meta -->
+    <div class="text-xs md:text-sm text-gray-500 mb-4 md:mb-5 space-y-1">
       <p>Creado: {{ formatDate(course.createdAt) }}</p>
       <p>Actualizado: {{ formatDate(course.updatedAt) }}</p>
     </div>
 
-    <div class="card-actions" @click.stop>
+    <!-- Actions -->
+    <div class="flex gap-2 pt-3 md:pt-4 border-t border-gray-100" @click.stop>
       <button
         v-if="course.status === 'Draft'"
-        class="btn-action btn-publish"
         @click="handlePublish"
-        title="Publicar curso"
+        class="flex-1 py-2 md:py-2.5 rounded-lg bg-green-50 hover:bg-green-100 text-base md:text-lg transition-colors"
+        title="Publicar"
       >
         🚀
       </button>
       <button
         v-else
-        class="btn-action btn-unpublish"
         @click="handleUnpublish"
-        title="Despublicar curso"
+        class="flex-1 py-2 md:py-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-base md:text-lg transition-colors"
+        title="Despublicar"
       >
         📥
       </button>
 
       <button
-        class="btn-action btn-edit"
         @click="emit('edit', { id: course.id, title: course.title })"
-        title="Editar curso"
+        class="flex-1 py-2 md:py-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-base md:text-lg transition-colors"
+        title="Editar"
       >
         ✏️
       </button>
 
       <button
-        class="btn-action btn-delete"
         @click="handleDelete"
-        title="Eliminar curso"
+        class="flex-1 py-2 md:py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-base md:text-lg transition-colors"
+        title="Eliminar"
       >
         🗑️
       </button>
     </div>
-
-    <div v-if="authStore.isAdmin" class="admin-badge">
-      Admin
-    </div>
   </div>
 </template>
-
-<style scoped>
-.course-card {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative;
-}
-
-.course-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-.card-header {
-  margin-bottom: 16px;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.status-badge.draft {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status-badge.published {
-  background: #d4edda;
-  color: #155724;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 16px 0;
-  line-height: 1.4;
-}
-
-.card-meta {
-  font-size: 13px;
-  color: #888;
-  margin-bottom: 20px;
-}
-
-.card-meta p {
-  margin: 4px 0;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-  border-top: 1px solid #eee;
-  padding-top: 16px;
-}
-
-.btn-action {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.2s;
-}
-
-.btn-publish {
-  background: #e8f5e9;
-}
-
-.btn-publish:hover {
-  background: #c8e6c9;
-}
-
-.btn-unpublish {
-  background: #fff3e0;
-}
-
-.btn-unpublish:hover {
-  background: #ffe0b2;
-}
-
-.btn-edit {
-  background: #e3f2fd;
-}
-
-.btn-edit:hover {
-  background: #bbdefb;
-}
-
-.btn-delete {
-  background: #ffebee;
-}
-
-.btn-delete:hover {
-  background: #ffcdd2;
-}
-
-.admin-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 10px;
-}
-</style>
-

@@ -6,224 +6,141 @@ import { useAuthStore } from '@/stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
+const form = ref({
+  email: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+})
+
+const localError = ref('')
 
 async function handleSubmit() {
-  if (password.value !== confirmPassword.value) {
-    authStore.error = 'Las contraseñas no coinciden'
+  localError.value = ''
+
+  if (form.value.password !== form.value.confirmPassword) {
+    localError.value = 'Las contraseñas no coinciden'
+    return
+  }
+
+  if (form.value.password.length < 6) {
+    localError.value = 'La contraseña debe tener al menos 6 caracteres'
     return
   }
 
   const success = await authStore.register({
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    password: password.value,
-    confirmPassword: confirmPassword.value,
+    email: form.value.email,
+    password: form.value.password,
+    firstName: form.value.firstName,
+    lastName: form.value.lastName,
   })
 
   if (success) {
     router.push('/courses')
   }
 }
+
+function goToLogin() {
+  router.push('/login')
+}
 </script>
 
 <template>
-  <div class="register-container">
-    <div class="register-card">
-      <h1>🎓 Riwi Courses</h1>
-      <h2>Crear Cuenta</h2>
+  <div class="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 flex items-center justify-center p-5">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl mb-2">🎓</h1>
+        <h2 class="text-2xl font-bold text-slate-800">Crear Cuenta</h2>
+        <p class="text-gray-500 mt-2">Únete a Riwi Courses hoy</p>
+      </div>
 
-      <form @submit.prevent="handleSubmit">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="firstName">Nombre</label>
+      <!-- Form -->
+      <form @submit.prevent="handleSubmit" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="firstName" class="block mb-2 text-gray-600 font-medium text-sm">Nombre</label>
             <input
               id="firstName"
-              v-model="firstName"
+              v-model="form.firstName"
               type="text"
-              placeholder="Tu nombre"
+              placeholder="Juan"
               required
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
             />
           </div>
-
-          <div class="form-group">
-            <label for="lastName">Apellido</label>
+          <div>
+            <label for="lastName" class="block mb-2 text-gray-600 font-medium text-sm">Apellido</label>
             <input
               id="lastName"
-              v-model="lastName"
+              v-model="form.lastName"
               type="text"
-              placeholder="Tu apellido"
+              placeholder="Pérez"
               required
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
             />
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="email">Email</label>
+        <div>
+          <label for="email" class="block mb-2 text-gray-600 font-medium text-sm">Email</label>
           <input
             id="email"
-            v-model="email"
+            v-model="form.email"
             type="email"
-            placeholder="correo@ejemplo.com"
+            placeholder="juan@ejemplo.com"
             required
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
         </div>
 
-        <div class="form-group">
-          <label for="password">Contraseña</label>
+        <div>
+          <label for="password" class="block mb-2 text-gray-600 font-medium text-sm">Contraseña</label>
           <input
             id="password"
-            v-model="password"
+            v-model="form.password"
             type="password"
-            placeholder="Mínimo 6 caracteres"
+            placeholder="••••••••"
             required
-            minlength="6"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
         </div>
 
-        <div class="form-group">
-          <label for="confirmPassword">Confirmar Contraseña</label>
+        <div>
+          <label for="confirmPassword" class="block mb-2 text-gray-600 font-medium text-sm">Confirmar Contraseña</label>
           <input
             id="confirmPassword"
-            v-model="confirmPassword"
+            v-model="form.confirmPassword"
             type="password"
-            placeholder="Repite tu contraseña"
+            placeholder="••••••••"
             required
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all"
           />
         </div>
 
-        <div v-if="authStore.error" class="error-message">
-          {{ authStore.error }}
+        <div v-if="localError || authStore.error" class="bg-red-50 text-red-600 p-3 rounded-xl text-center text-sm">
+          {{ localError || authStore.error }}
         </div>
 
-        <button type="submit" :disabled="authStore.loading" class="btn-primary">
+        <button
+          type="submit"
+          :disabled="authStore.loading"
+          class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-lg rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed transition-all mt-2"
+        >
           {{ authStore.loading ? 'Creando cuenta...' : 'Registrarse' }}
         </button>
       </form>
 
-      <p class="login-link">
-        ¿Ya tienes cuenta?
-        <router-link to="/login">Inicia sesión</router-link>
-      </p>
+      <!-- Footer -->
+      <div class="mt-6 text-center">
+        <p class="text-gray-500">
+          ¿Ya tienes cuenta?
+          <button @click="goToLogin" class="text-indigo-500 font-semibold hover:underline ml-1">
+            Inicia sesión
+          </button>
+        </p>
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.register-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
-
-.register-card {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 450px;
-}
-
-h1 {
-  text-align: center;
-  color: #667eea;
-  margin-bottom: 10px;
-}
-
-h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-  font-weight: 500;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 8px;
-  color: #555;
-  font-weight: 500;
-}
-
-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-
-input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background: #fee;
-  color: #c00;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.login-link {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
-}
-
-.login-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-</style>
-
