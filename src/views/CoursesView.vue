@@ -65,49 +65,54 @@ function handleViewCourse(id: string) {
 
 <template>
   <AppLayout>
-    <div class="courses-page">
+    <div class="p-8 w-full">
       <!-- Page Header -->
-      <header class="page-header">
+      <header class="flex justify-between items-start mb-8">
         <div>
-          <h1>📚 Courses</h1>
-          <p class="subtitle">Manage your courses and lessons</p>
+          <h1 class="text-3xl font-bold text-slate-800">📚 Courses</h1>
+          <p class="text-gray-500 mt-1">Manage your courses and lessons</p>
         </div>
-        <button class="btn-create" @click="handleCreateCourse">
+        <button
+          @click="handleCreateCourse"
+          class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all"
+        >
           + New Course
         </button>
       </header>
 
       <!-- Filters -->
-      <div class="filters-section">
-        <div class="search-box">
+      <div class="flex flex-wrap gap-4 mb-8">
+        <div class="flex-1 min-w-[250px]">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="🔍 Search courses..."
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition-all bg-white"
           />
         </div>
-        <div class="filter-status">
-          <select v-model="statusFilter">
-            <option value="">All Status</option>
-            <option value="Draft">Draft</option>
-            <option value="Published">Published</option>
-          </select>
-        </div>
+        <select
+          v-model="statusFilter"
+          class="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 outline-none bg-white min-w-[150px]"
+        >
+          <option value="">All Status</option>
+          <option value="Draft">Draft</option>
+          <option value="Published">Published</option>
+        </select>
       </div>
 
       <!-- Error Message -->
-      <div v-if="courseStore.error" class="error-message">
+      <div v-if="courseStore.error" class="bg-red-50 text-red-600 p-4 rounded-xl mb-6 text-center">
         {{ courseStore.error }}
       </div>
 
       <!-- Loading -->
-      <div v-if="courseStore.loading" class="loading">
-        <div class="spinner"></div>
-        <p>Loading courses...</p>
+      <div v-if="courseStore.loading" class="flex flex-col items-center justify-center py-20">
+        <div class="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-500">Loading courses...</p>
       </div>
 
       <!-- Course List -->
-      <div v-else-if="courseStore.courses.length > 0" class="courses-grid">
+      <div v-else-if="courseStore.courses.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <CourseCard
           v-for="course in courseStore.courses"
           :key="course.id"
@@ -118,29 +123,34 @@ function handleViewCourse(id: string) {
       </div>
 
       <!-- Empty State -->
-      <div v-else class="empty-state">
-        <div class="empty-icon">📚</div>
-        <p>No courses found</p>
-        <button class="btn-create" @click="handleCreateCourse">
+      <div v-else class="flex flex-col items-center justify-center py-20 text-gray-500">
+        <div class="text-6xl mb-4">📚</div>
+        <p class="text-lg mb-6">No courses found</p>
+        <button
+          @click="handleCreateCourse"
+          class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg"
+        >
           Create your first course
         </button>
       </div>
 
       <!-- Pagination -->
-      <div v-if="courseStore.totalPages > 1" class="pagination">
+      <div v-if="courseStore.totalPages > 1" class="flex justify-center items-center gap-6 mt-10">
         <button
           :disabled="courseStore.currentPage === 1"
           @click="changePage(courseStore.currentPage - 1)"
+          class="px-5 py-2.5 border-2 border-indigo-500 text-indigo-500 rounded-lg font-medium hover:bg-indigo-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           ← Previous
         </button>
-        <span>
+        <span class="text-gray-600">
           Page {{ courseStore.currentPage }} of {{ courseStore.totalPages }}
           ({{ courseStore.totalCount }} courses)
         </span>
         <button
           :disabled="courseStore.currentPage === courseStore.totalPages"
           @click="changePage(courseStore.currentPage + 1)"
+          class="px-5 py-2.5 border-2 border-indigo-500 text-indigo-500 rounded-lg font-medium hover:bg-indigo-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           Next →
         </button>
@@ -155,176 +165,3 @@ function handleViewCourse(id: string) {
     />
   </AppLayout>
 </template>
-
-<style scoped>
-.courses-page {
-  padding: 30px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
-}
-
-.page-header h1 {
-  font-size: 28px;
-  color: #1a1a2e;
-  margin: 0 0 8px 0;
-}
-
-.subtitle {
-  color: #666;
-  margin: 0;
-  font-size: 15px;
-}
-
-.btn-create {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-create:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.filters-section {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-}
-
-.search-box {
-  flex: 1;
-  min-width: 250px;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e1e1e1;
-  border-radius: 10px;
-  font-size: 15px;
-  box-sizing: border-box;
-  background: white;
-  transition: all 0.3s;
-}
-
-.search-box input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.filter-status select {
-  padding: 12px 16px;
-  border: 2px solid #e1e1e1;
-  border-radius: 10px;
-  font-size: 15px;
-  background: white;
-  cursor: pointer;
-  min-width: 150px;
-}
-
-.filter-status select:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.courses-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-}
-
-.loading,
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  color: #666;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e0e0e0;
-  border-top-color: #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.empty-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-}
-
-.empty-state p {
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-.error-message {
-  background: #fee;
-  color: #c00;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-top: 30px;
-  padding: 20px;
-}
-
-.pagination button {
-  background: white;
-  border: 2px solid #667eea;
-  color: #667eea;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
-}
-
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination span {
-  color: #666;
-}
-</style>

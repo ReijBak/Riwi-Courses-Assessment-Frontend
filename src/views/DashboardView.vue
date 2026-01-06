@@ -34,142 +34,148 @@ function navigateToCourses() {
 
 <template>
   <AppLayout>
-    <div class="dashboard">
+    <div class="p-8 w-full">
       <!-- Header -->
-      <header class="dashboard-header">
+      <header class="flex justify-between items-start mb-8">
         <div>
-          <h1>Dashboard</h1>
-          <p class="welcome-text">
+          <h1 class="text-3xl font-bold text-slate-800">Dashboard</h1>
+          <p class="text-gray-500 mt-1">
             Welcome back, <strong>{{ authStore.user?.firstName }}</strong>! 👋
           </p>
         </div>
-        <div class="header-actions">
-          <button class="btn-primary" @click="navigateToCourses">
-            📚 Manage Courses
-          </button>
-        </div>
+        <button
+          @click="navigateToCourses"
+          class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all"
+        >
+          📚 Manage Courses
+        </button>
       </header>
 
       <!-- Loading State -->
-      <div v-if="dashboardStore.loading" class="loading-state">
-        <div class="spinner"></div>
-        <p>Loading metrics...</p>
+      <div v-if="dashboardStore.loading" class="flex flex-col items-center justify-center py-20">
+        <div class="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-500">Loading metrics...</p>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="dashboardStore.error" class="error-state">
-        <p>{{ dashboardStore.error }}</p>
-        <button @click="dashboardStore.fetchMetrics()">Retry</button>
+      <div v-else-if="dashboardStore.error" class="text-center py-20">
+        <p class="text-red-500 mb-4">{{ dashboardStore.error }}</p>
+        <button
+          @click="dashboardStore.fetchMetrics()"
+          class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600"
+        >
+          Retry
+        </button>
       </div>
 
       <!-- Dashboard Content -->
-      <div v-else class="dashboard-content">
+      <div v-else class="space-y-8">
         <!-- Metrics Cards -->
-        <div class="metrics-grid">
-          <div class="metric-card total">
-            <div class="metric-icon">📚</div>
-            <div class="metric-info">
-              <span class="metric-value">{{ dashboardStore.metrics.totalCourses }}</span>
-              <span class="metric-label">Total Courses</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-xl bg-indigo-100 flex items-center justify-center text-3xl">📚</div>
+              <div>
+                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.totalCourses }}</span>
+                <p class="text-gray-500 text-sm mt-1">Total Courses</p>
+              </div>
             </div>
           </div>
 
-          <div class="metric-card published">
-            <div class="metric-icon">✅</div>
-            <div class="metric-info">
-              <span class="metric-value">{{ dashboardStore.metrics.publishedCourses }}</span>
-              <span class="metric-label">Published</span>
+          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center text-3xl">✅</div>
+              <div>
+                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.publishedCourses }}</span>
+                <p class="text-gray-500 text-sm mt-1">Published</p>
+              </div>
             </div>
           </div>
 
-          <div class="metric-card draft">
-            <div class="metric-icon">📝</div>
-            <div class="metric-info">
-              <span class="metric-value">{{ dashboardStore.metrics.draftCourses }}</span>
-              <span class="metric-label">Drafts</span>
+          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center text-3xl">📝</div>
+              <div>
+                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.draftCourses }}</span>
+                <p class="text-gray-500 text-sm mt-1">Drafts</p>
+              </div>
             </div>
           </div>
 
-          <div class="metric-card lessons">
-            <div class="metric-icon">📖</div>
-            <div class="metric-info">
-              <span class="metric-value">{{ dashboardStore.metrics.totalLessons }}</span>
-              <span class="metric-label">Total Lessons</span>
+          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-3xl">📖</div>
+              <div>
+                <span class="text-4xl font-bold text-slate-800">{{ dashboardStore.metrics.totalLessons }}</span>
+                <p class="text-gray-500 text-sm mt-1">Total Lessons</p>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="charts-section">
-          <div class="chart-card">
-            <h3>Course Distribution</h3>
-            <div class="pie-chart">
-              <div class="pie-visual">
-                <svg viewBox="0 0 100 100">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Course Distribution -->
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-800 mb-5">Course Distribution</h3>
+            <div class="flex items-center gap-8">
+              <div class="relative w-36 h-36">
+                <svg viewBox="0 0 100 100" class="w-full h-full">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" stroke-width="20" />
                   <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="#e0e0e0"
-                    stroke-width="20"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="#28a745"
-                    stroke-width="20"
+                    cx="50" cy="50" r="40" fill="none" stroke="#22c55e" stroke-width="20"
                     :stroke-dasharray="`${(dashboardStore.metrics.publishedCourses / Math.max(dashboardStore.metrics.totalCourses, 1)) * 251.2} 251.2`"
-                    stroke-dashoffset="0"
-                    transform="rotate(-90 50 50)"
+                    stroke-dashoffset="0" transform="rotate(-90 50 50)"
                   />
                 </svg>
-                <div class="pie-center">
-                  <span class="pie-percentage">
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-2xl font-bold text-slate-800">
                     {{ dashboardStore.metrics.totalCourses > 0
                       ? Math.round((dashboardStore.metrics.publishedCourses / dashboardStore.metrics.totalCourses) * 100)
                       : 0 }}%
                   </span>
-                  <span class="pie-label">Published</span>
+                  <span class="text-xs text-gray-500">Published</span>
                 </div>
               </div>
-              <div class="pie-legend">
-                <div class="legend-item">
-                  <span class="legend-color published"></span>
-                  <span>Published ({{ dashboardStore.metrics.publishedCourses }})</span>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <span class="w-3 h-3 rounded bg-green-500"></span>
+                  <span class="text-gray-600">Published ({{ dashboardStore.metrics.publishedCourses }})</span>
                 </div>
-                <div class="legend-item">
-                  <span class="legend-color draft"></span>
-                  <span>Draft ({{ dashboardStore.metrics.draftCourses }})</span>
+                <div class="flex items-center gap-3">
+                  <span class="w-3 h-3 rounded bg-gray-300"></span>
+                  <span class="text-gray-600">Draft ({{ dashboardStore.metrics.draftCourses }})</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="chart-card">
-            <h3>Quick Stats</h3>
-            <div class="stats-list">
-              <div class="stat-item">
-                <span class="stat-label">Avg. Lessons per Course</span>
-                <span class="stat-value">
+          <!-- Quick Stats -->
+          <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-800 mb-5">Quick Stats</h3>
+            <div class="space-y-5">
+              <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                <span class="text-gray-600">Avg. Lessons per Course</span>
+                <span class="text-xl font-semibold text-slate-800">
                   {{ dashboardStore.metrics.totalCourses > 0
                     ? (dashboardStore.metrics.totalLessons / dashboardStore.metrics.totalCourses).toFixed(1)
                     : 0 }}
                 </span>
               </div>
-              <div class="stat-item">
-                <span class="stat-label">Publication Rate</span>
-                <span class="stat-value">
+              <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                <span class="text-gray-600">Publication Rate</span>
+                <span class="text-xl font-semibold text-slate-800">
                   {{ dashboardStore.metrics.totalCourses > 0
                     ? Math.round((dashboardStore.metrics.publishedCourses / dashboardStore.metrics.totalCourses) * 100)
                     : 0 }}%
                 </span>
               </div>
-              <div class="stat-item">
-                <span class="stat-label">User Role</span>
-                <span class="stat-value role" :class="{ admin: authStore.isAdmin }">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">User Role</span>
+                <span
+                  class="px-3 py-1 rounded-full text-sm font-medium"
+                  :class="authStore.isAdmin ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'"
+                >
                   {{ authStore.isAdmin ? 'Administrator' : 'User' }}
                 </span>
               </div>
@@ -177,35 +183,43 @@ function navigateToCourses() {
           </div>
         </div>
 
-        <!-- Recent Courses -->
-        <div class="recent-section">
-          <div class="section-header">
-            <h3>📅 Recent Activity</h3>
-            <button class="btn-link" @click="navigateToCourses">View All →</button>
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="flex justify-between items-center mb-5">
+            <h3 class="text-lg font-semibold text-slate-800">📅 Recent Activity</h3>
+            <button @click="navigateToCourses" class="text-indigo-500 hover:text-indigo-600 font-medium text-sm">
+              View All →
+            </button>
           </div>
 
-          <div v-if="dashboardStore.metrics.recentCourses.length > 0" class="recent-list">
+          <div v-if="dashboardStore.metrics.recentCourses.length > 0" class="space-y-3">
             <div
               v-for="course in dashboardStore.metrics.recentCourses"
               :key="course.id"
-              class="recent-item"
               @click="navigateToCourse(course.id)"
+              class="flex justify-between items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 hover:translate-x-1 transition-all"
             >
-              <div class="recent-info">
-                <span class="recent-title">{{ course.title }}</span>
-                <span class="recent-meta">
+              <div>
+                <p class="font-semibold text-slate-800">{{ course.title }}</p>
+                <p class="text-sm text-gray-500">
                   {{ course.totalLessons }} lessons • Updated {{ formatDate(course.lastModified) }}
-                </span>
+                </p>
               </div>
-              <span :class="['status-badge', course.status.toLowerCase()]">
+              <span
+                class="px-3 py-1.5 rounded-full text-xs font-semibold"
+                :class="course.status === 'Published' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+              >
                 {{ course.status }}
               </span>
             </div>
           </div>
 
-          <div v-else class="empty-recent">
-            <p>No courses yet. Create your first course!</p>
-            <button class="btn-primary" @click="navigateToCourses">
+          <div v-else class="text-center py-10">
+            <p class="text-gray-500 mb-4">No courses yet. Create your first course!</p>
+            <button
+              @click="navigateToCourses"
+              class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg"
+            >
               + Create Course
             </button>
           </div>
@@ -216,369 +230,5 @@ function navigateToCourses() {
 </template>
 
 <style scoped>
-.dashboard {
-  padding: 30px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
-}
-
-.dashboard-header h1 {
-  font-size: 28px;
-  color: #1a1a2e;
-  margin: 0 0 8px 0;
-}
-
-.welcome-text {
-  color: #666;
-  margin: 0;
-  font-size: 15px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.loading-state,
-.error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  color: #666;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #e0e0e0;
-  border-top-color: #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Metrics Grid */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.metric-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s;
-}
-
-.metric-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.metric-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-}
-
-.metric-card.total .metric-icon {
-  background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-}
-
-.metric-card.published .metric-icon {
-  background: #d4edda;
-}
-
-.metric-card.draft .metric-icon {
-  background: #fff3cd;
-}
-
-.metric-card.lessons .metric-icon {
-  background: #e3f2fd;
-}
-
-.metric-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.metric-value {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a2e;
-  line-height: 1;
-}
-
-.metric-label {
-  font-size: 14px;
-  color: #666;
-  margin-top: 6px;
-}
-
-/* Charts Section */
-.charts-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.chart-card h3 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  color: #1a1a2e;
-}
-
-.pie-chart {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
-
-.pie-visual {
-  position: relative;
-  width: 140px;
-  height: 140px;
-}
-
-.pie-visual svg {
-  width: 100%;
-  height: 100%;
-}
-
-.pie-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.pie-percentage {
-  display: block;
-  font-size: 24px;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.pie-label {
-  font-size: 12px;
-  color: #666;
-}
-
-.pie-legend {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: #555;
-}
-
-.legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-}
-
-.legend-color.published {
-  background: #28a745;
-}
-
-.legend-color.draft {
-  background: #e0e0e0;
-}
-
-/* Stats List */
-.stats-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.stat-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #666;
-}
-
-.stat-value {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a2e;
-}
-
-.stat-value.role {
-  font-size: 14px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: #f0f0f0;
-}
-
-.stat-value.role.admin {
-  background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-  color: #667eea;
-}
-
-/* Recent Section */
-.recent-section {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.section-header h3 {
-  margin: 0;
-  font-size: 18px;
-  color: #1a1a2e;
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: #667eea;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.btn-link:hover {
-  color: #764ba2;
-}
-
-.recent-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.recent-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.recent-item:hover {
-  background: #f0f2f5;
-  transform: translateX(4px);
-}
-
-.recent-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.recent-title {
-  font-weight: 600;
-  color: #1a1a2e;
-}
-
-.recent-meta {
-  font-size: 13px;
-  color: #888;
-}
-
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-badge.published {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status-badge.draft {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.empty-recent {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-}
-
-.empty-recent .btn-primary {
-  margin-top: 16px;
-}
+/* No custom styles needed, using Tailwind CSS classes */
 </style>
-

@@ -4,6 +4,8 @@ Frontend en Vue.js 3 para la plataforma de gestión de cursos online.
 
 ## 🚀 Características
 
+- ✅ **Dashboard con Métricas** - Panel principal con estadísticas y gráficos
+- ✅ **Sidebar de Navegación** - Menú lateral con acceso rápido a todas las vistas
 - ✅ **Autenticación JWT** - Login y registro de usuarios
 - ✅ **Gestión de Cursos** - CRUD completo con filtros y paginación
 - ✅ **Gestión de Lecciones** - CRUD con reordenamiento
@@ -46,6 +48,8 @@ VITE_API_URL=http://localhost:5023/api
 src/
 ├── api/                 # Cliente HTTP con Axios
 ├── components/          # Componentes reutilizables
+│   ├── AppLayout.vue    # Layout principal con sidebar
+│   ├── SidebarMenu.vue  # Menú de navegación lateral
 │   ├── CourseCard.vue
 │   ├── CourseModal.vue
 │   ├── LessonCard.vue
@@ -54,11 +58,13 @@ src/
 ├── stores/              # Stores de Pinia
 │   ├── auth.ts         # Estado de autenticación
 │   ├── courses.ts      # Estado de cursos
-│   └── lessons.ts      # Estado de lecciones
+│   ├── lessons.ts      # Estado de lecciones
+│   └── dashboard.ts    # Estado de métricas del dashboard
 ├── types/               # Tipos TypeScript
 ├── views/               # Vistas/Páginas
 │   ├── LoginView.vue
 │   ├── RegisterView.vue
+│   ├── DashboardView.vue # Dashboard con métricas
 │   ├── CoursesView.vue
 │   └── CourseDetailView.vue
 ├── App.vue
@@ -73,6 +79,13 @@ src/
 | User | user@riwi.io | User123! |
 
 ## 📊 Funcionalidades
+
+### Dashboard
+- Métricas de cursos (total, publicados, borradores)
+- Total de lecciones
+- Gráfico de distribución de cursos
+- Actividad reciente
+- Estadísticas rápidas
 
 ### Cursos
 - Listar cursos con paginación

@@ -3,25 +3,10 @@ import SidebarMenu from '@/components/SidebarMenu.vue'
 </script>
 
 <template>
-  <div class="app-layout">
+  <div class="flex min-h-screen bg-gray-100">
     <SidebarMenu />
-    <main class="main-content">
+    <main class="flex-1 ml-64 min-h-screen w-full">
       <slot />
     </main>
   </div>
 </template>
-
-<style scoped>
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f5f7fa;
-}
-
-.main-content {
-  flex: 1;
-  margin-left: 260px;
-  min-height: 100vh;
-}
-</style>
-

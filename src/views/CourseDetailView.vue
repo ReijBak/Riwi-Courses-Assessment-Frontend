@@ -186,8 +186,8 @@ function getNextOrder() {
 <style scoped>
 .course-detail-page {
   padding: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .breadcrumb {

@@ -33,179 +33,56 @@ function handleLogout() {
 </script>
 
 <template>
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h1 class="logo">🎓 Riwi</h1>
-      <span class="logo-subtitle">Courses</span>
+  <aside class="w-64 h-screen bg-gradient-to-b from-slate-900 to-slate-800 fixed left-0 top-0 z-50 flex flex-col">
+    <!-- Header -->
+    <div class="p-6 border-b border-white/10">
+      <h1 class="text-2xl font-bold text-white">🎓 Riwi</h1>
+      <span class="text-indigo-400 text-sm font-medium ml-2">Courses</span>
     </div>
 
-    <nav class="sidebar-nav">
-      <ul>
+    <!-- Navigation -->
+    <nav class="flex-1 py-5">
+      <ul class="space-y-1">
         <li
           v-for="item in menuItems"
           :key="item.path"
-          :class="{ active: item.active }"
           @click="navigate(item.path)"
+          class="flex items-center px-6 py-3.5 cursor-pointer transition-all duration-300 border-l-4"
+          :class="item.active
+            ? 'bg-indigo-500/20 text-white border-indigo-500'
+            : 'text-white/70 border-transparent hover:bg-white/5 hover:text-white'"
         >
-          <span class="icon">{{ item.icon }}</span>
-          <span class="label">{{ item.name }}</span>
+          <span class="text-xl mr-3">{{ item.icon }}</span>
+          <span class="font-medium">{{ item.name }}</span>
         </li>
       </ul>
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar">
+    <!-- Footer -->
+    <div class="p-5 border-t border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold">
           {{ authStore.user?.firstName?.charAt(0) || 'U' }}
         </div>
-        <div class="user-details">
-          <span class="user-name">{{ authStore.user?.fullName }}</span>
-          <span class="user-role" :class="{ admin: authStore.isAdmin }">
+        <div class="flex flex-col">
+          <span class="text-white text-sm font-medium truncate max-w-[120px]">
+            {{ authStore.user?.fullName }}
+          </span>
+          <span
+            class="text-xs"
+            :class="authStore.isAdmin ? 'text-indigo-400' : 'text-white/50'"
+          >
             {{ authStore.isAdmin ? 'Admin' : 'User' }}
           </span>
         </div>
       </div>
-      <button class="btn-logout" @click="handleLogout" title="Logout">
+      <button
+        @click="handleLogout"
+        class="w-9 h-9 rounded-lg bg-white/10 hover:bg-red-500/20 transition-colors flex items-center justify-center"
+        title="Logout"
+      >
         🚪
       </button>
     </div>
   </aside>
 </template>
-
-<style scoped>
-.sidebar {
-  width: 260px;
-  height: 100vh;
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
-}
-
-.sidebar-header {
-  padding: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo {
-  font-size: 24px;
-  color: white;
-  margin: 0;
-  font-weight: 700;
-}
-
-.logo-subtitle {
-  color: #667eea;
-  font-size: 14px;
-  font-weight: 500;
-  margin-left: 8px;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 20px 0;
-}
-
-.sidebar-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar-nav li {
-  display: flex;
-  align-items: center;
-  padding: 14px 24px;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition: all 0.3s;
-  border-left: 3px solid transparent;
-}
-
-.sidebar-nav li:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-}
-
-.sidebar-nav li.active {
-  background: rgba(102, 126, 234, 0.2);
-  color: white;
-  border-left-color: #667eea;
-}
-
-.sidebar-nav .icon {
-  font-size: 20px;
-  margin-right: 12px;
-}
-
-.sidebar-nav .label {
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.user-role {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.user-role.admin {
-  color: #667eea;
-}
-
-.btn-logout {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.3s;
-}
-
-.btn-logout:hover {
-  background: rgba(255, 77, 77, 0.2);
-}
-</style>
-
