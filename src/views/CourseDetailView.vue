@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useCourseStore } from '@/stores/courses'
 import { useLessonStore } from '@/stores/lessons'
 import { useAuthStore } from '@/stores/auth'
+import AppLayout from '@/components/AppLayout.vue'
 import LessonCard from '@/components/LessonCard.vue'
 import LessonModal from '@/components/LessonModal.vue'
 
@@ -62,13 +63,8 @@ function goBack() {
   router.push('/courses')
 }
 
-function handleLogout() {
-  authStore.logout()
-  router.push('/login')
-}
-
 function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('es-ES', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -84,27 +80,17 @@ function getNextOrder() {
 </script>
 
 <template>
-  <div class="course-detail-page">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-content">
-        <div class="header-left">
-          <button class="btn-back" @click="goBack">← Volver</button>
-          <h1>🎓 Riwi Courses</h1>
-        </div>
-        <div class="user-info">
-          <span>{{ authStore.user?.fullName }}</span>
-          <span v-if="authStore.isAdmin" class="badge-admin">Admin</span>
-          <button class="btn-logout" @click="handleLogout">Cerrar Sesión</button>
-        </div>
+  <AppLayout>
+    <div class="course-detail-page">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <button class="btn-back" @click="goBack">← Back to Courses</button>
       </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
       <!-- Loading -->
       <div v-if="courseStore.loading && !courseStore.currentCourse" class="loading">
-        Cargando curso...
+        <div class="spinner"></div>
+        <p>Loading course...</p>
       </div>
 
       <!-- Course Info -->
@@ -112,12 +98,12 @@ function getNextOrder() {
         <div class="course-header">
           <div>
             <span :class="['status-badge', courseStore.currentCourse.status.toLowerCase()]">
-              {{ courseStore.currentCourse.status === 'Draft' ? '📝 Borrador' : '✅ Publicado' }}
+              {{ courseStore.currentCourse.status === 'Draft' ? '📝 Draft' : '✅ Published' }}
             </span>
-            <h2>{{ courseStore.currentCourse.title }}</h2>
+            <h1>{{ courseStore.currentCourse.title }}</h1>
             <p class="course-meta">
-              📚 {{ courseStore.currentCourse.totalLessons }} lecciones •
-              Última modificación: {{ formatDate(courseStore.currentCourse.lastModified) }}
+              📖 {{ courseStore.currentCourse.totalLessons }} lessons •
+              Last modified: {{ formatDate(courseStore.currentCourse.lastModified) }}
             </p>
           </div>
           <div class="course-actions">
@@ -126,10 +112,10 @@ function getNextOrder() {
               class="btn-publish"
               @click="handlePublish"
             >
-              🚀 Publicar
+              🚀 Publish
             </button>
             <button v-else class="btn-unpublish" @click="handleUnpublish">
-              📥 Despublicar
+              📥 Unpublish
             </button>
           </div>
         </div>
@@ -143,9 +129,9 @@ function getNextOrder() {
       <!-- Lessons Section -->
       <div class="lessons-section">
         <div class="lessons-header">
-          <h3>📖 Lecciones</h3>
+          <h2>📖 Lessons</h2>
           <button class="btn-add-lesson" @click="handleCreateLesson">
-            + Nueva Lección
+            + New Lesson
           </button>
         </div>
 
@@ -156,7 +142,8 @@ function getNextOrder() {
 
         <!-- Loading -->
         <div v-if="lessonStore.loading && lessonStore.lessons.length === 0" class="loading">
-          Cargando lecciones...
+          <div class="spinner"></div>
+          <p>Loading lessons...</p>
         </div>
 
         <!-- Lessons List -->
@@ -173,16 +160,17 @@ function getNextOrder() {
 
         <!-- Empty State -->
         <div v-else class="empty-state">
-          <p>Este curso no tiene lecciones</p>
+          <div class="empty-icon">📖</div>
+          <p>No lessons yet</p>
           <p class="hint">
-            Agrega al menos una lección para poder publicar el curso
+            Add at least one lesson to publish this course
           </p>
           <button class="btn-add-lesson" @click="handleCreateLesson">
-            Crear la primera lección
+            Create first lesson
           </button>
         </div>
       </div>
-    </main>
+    </div>
 
     <!-- Lesson Modal -->
     <LessonModal
@@ -192,96 +180,66 @@ function getNextOrder() {
       :next-order="getNextOrder()"
       @close="handleCloseModal"
     />
-  </div>
+  </AppLayout>
 </template>
 
 <style scoped>
 .course-detail-page {
-  min-height: 100vh;
-  background: #f5f7fa;
-}
-
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
+  padding: 30px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+.breadcrumb {
+  margin-bottom: 20px;
 }
 
 .btn-back {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: none;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  color: #667eea;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s;
+  padding: 8px 0;
+  transition: color 0.3s;
 }
 
 .btn-back:hover {
-  background: rgba(255, 255, 255, 0.3);
+  color: #764ba2;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.user-info {
+.loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  padding: 60px;
+  color: #666;
 }
 
-.badge-admin {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
 }
 
-.btn-logout {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px 20px;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .course-info-section {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 30px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .course-header {
@@ -293,10 +251,10 @@ function getNextOrder() {
 
 .status-badge {
   display: inline-block;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 12px;
 }
 
@@ -310,15 +268,16 @@ function getNextOrder() {
   color: #155724;
 }
 
-.course-info-section h2 {
+.course-info-section h1 {
   margin: 0 0 12px 0;
-  color: #333;
+  color: #1a1a2e;
   font-size: 28px;
 }
 
 .course-meta {
   color: #666;
   margin: 0;
+  font-size: 15px;
 }
 
 .course-actions {
@@ -330,11 +289,11 @@ function getNextOrder() {
 .btn-unpublish {
   padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
 
 .btn-publish {
@@ -344,7 +303,7 @@ function getNextOrder() {
 
 .btn-publish:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
 }
 
 .btn-unpublish {
@@ -354,14 +313,14 @@ function getNextOrder() {
 
 .btn-unpublish:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
 }
 
 .lessons-section {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .lessons-header {
@@ -371,10 +330,10 @@ function getNextOrder() {
   margin-bottom: 24px;
 }
 
-.lessons-header h3 {
+.lessons-header h2 {
   margin: 0;
-  color: #333;
-  font-size: 20px;
+  color: #1a1a2e;
+  font-size: 22px;
 }
 
 .btn-add-lesson {
@@ -382,16 +341,16 @@ function getNextOrder() {
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
 
 .btn-add-lesson:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .lessons-list {
@@ -400,26 +359,34 @@ function getNextOrder() {
   gap: 12px;
 }
 
-.loading,
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
+  padding: 50px 20px;
   color: #666;
 }
 
-.empty-state .hint {
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.hint {
   font-size: 14px;
   color: #999;
-  margin: 8px 0 20px;
+  margin-bottom: 20px !important;
 }
 
 .error-message {
   background: #fee;
   color: #c00;
   padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
   text-align: center;
 }
 </style>
-
