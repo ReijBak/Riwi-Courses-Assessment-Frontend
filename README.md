@@ -1,53 +1,139 @@
-# Riwi-Courses-Assessment-Frontend
+# 🎓 Riwi Courses - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend en Vue.js 3 para la plataforma de gestión de cursos online.
 
-## Recommended IDE Setup
+## 🚀 Características
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- ✅ **Autenticación JWT** - Login y registro de usuarios
+- ✅ **Gestión de Cursos** - CRUD completo con filtros y paginación
+- ✅ **Gestión de Lecciones** - CRUD con reordenamiento
+- ✅ **Sistema de Roles** - Diferenciación Admin/User
+- ✅ **Diseño Responsivo** - Funciona en dispositivos móviles
+- ✅ **TypeScript** - Tipado estático completo
+- ✅ **Pinia** - Gestión de estado moderna
+- ✅ **Vue Router** - Navegación con guards de autenticación
 
-## Recommended Browser Setup
+## 📋 Requisitos
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Node.js 20.x o superior
+- npm o yarn
+- Backend API corriendo (puerto 5023 por defecto)
 
-## Type Support for `.vue` Imports in TS
+## 🛠️ Instalación
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
+# Instalar dependencias
 npm install
-```
 
-### Compile and Hot-Reload for Development
+# Configurar variables de entorno (opcional)
+cp .env.example .env
 
-```sh
+# Ejecutar en modo desarrollo
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## ⚙️ Configuración
 
-```sh
+Crear archivo `.env` en la raíz del proyecto:
+
+```env
+VITE_API_URL=http://localhost:5023/api
+```
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── api/                 # Cliente HTTP con Axios
+├── components/          # Componentes reutilizables
+│   ├── CourseCard.vue
+│   ├── CourseModal.vue
+│   ├── LessonCard.vue
+│   └── LessonModal.vue
+├── router/              # Configuración de Vue Router
+├── stores/              # Stores de Pinia
+│   ├── auth.ts         # Estado de autenticación
+│   ├── courses.ts      # Estado de cursos
+│   └── lessons.ts      # Estado de lecciones
+├── types/               # Tipos TypeScript
+├── views/               # Vistas/Páginas
+│   ├── LoginView.vue
+│   ├── RegisterView.vue
+│   ├── CoursesView.vue
+│   └── CourseDetailView.vue
+├── App.vue
+└── main.ts
+```
+
+## 🔐 Usuarios de Prueba
+
+| Rol | Email | Contraseña |
+|-----|-------|------------|
+| Admin | admin@riwi.io | Admin123! |
+| User | user@riwi.io | User123! |
+
+## 📊 Funcionalidades
+
+### Cursos
+- Listar cursos con paginación
+- Filtrar por estado (Borrador/Publicado)
+- Buscar por título
+- Crear, editar y eliminar cursos
+- Publicar/Despublicar cursos
+
+### Lecciones
+- Listar lecciones ordenadas
+- Crear, editar y eliminar lecciones
+- Reordenar lecciones (subir/bajar)
+
+### Autenticación
+- Login con JWT
+- Registro de nuevos usuarios
+- Persistencia de sesión
+- Logout
+
+## 🧪 Scripts Disponibles
+
+```bash
+# Desarrollo
+npm run dev
+
+# Build de producción
 npm run build
-```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+# Preview de producción
+npm run preview
 
-```sh
+# Tests unitarios
 npm run test:unit
+
+# Linting
+npm run lint
+
+# Formateo de código
+npm run format
 ```
 
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
+## 🎨 Tecnologías
+
+- **Vue 3** - Framework frontend
+- **TypeScript** - Tipado estático
+- **Pinia** - Gestión de estado
+- **Vue Router** - Navegación
+- **Axios** - Cliente HTTP
+- **Vite** - Build tool
+
+## 📱 Capturas de Pantalla
+
+La aplicación incluye:
+- Pantalla de Login con credenciales de demo
+- Listado de cursos con tarjetas interactivas
+- Detalle de curso con gestión de lecciones
+- Modales para crear/editar cursos y lecciones
+
+---
+
+Desarrollado para el Assessment Técnico de Riwi 🎓
 
 ```sh
 # Install browsers for the first run
