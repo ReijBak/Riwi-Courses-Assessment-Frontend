@@ -5,7 +5,7 @@ Frontend en Vue.js 3 para la plataforma de gestión de cursos online.
 ## 🚀 Características
 
 - ✅ **Dashboard con Métricas** - Panel principal con estadísticas y gráficos
-- ✅ **Sidebar de Navegación** - Menú lateral con acceso rápido a todas las vistas
+- ✅ **Sidebar de Navegación** - Menú lateral responsive con hamburguesa en móvil
 - ✅ **Autenticación JWT** - Login y registro de usuarios
 - ✅ **Gestión de Cursos** - CRUD completo con filtros y paginación
 - ✅ **Gestión de Lecciones** - CRUD con reordenamiento
@@ -14,6 +14,29 @@ Frontend en Vue.js 3 para la plataforma de gestión de cursos online.
 - ✅ **TypeScript** - Tipado estático completo
 - ✅ **Pinia** - Gestión de estado moderna
 - ✅ **Vue Router** - Navegación con guards de autenticación
+- ✅ **Tailwind CSS 4** - Framework CSS utility-first
+
+## 🐳 Docker
+
+### Build y ejecutar con Docker
+
+```bash
+# Build de la imagen
+docker build -t riwi-courses-frontend .
+
+# Ejecutar contenedor
+docker run -p 3000:80 riwi-courses-frontend
+```
+
+### Con Docker Compose (sistema completo)
+
+```bash
+# Desde la raíz del proyecto
+cd ..
+docker compose up -d
+```
+
+Acceder a: http://localhost:3000
 
 ## 📋 Requisitos
 
