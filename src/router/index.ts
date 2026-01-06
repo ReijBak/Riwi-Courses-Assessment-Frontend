@@ -37,17 +37,36 @@ const router = createRouter({
       component: () => import('../views/CourseDetailView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/trash',
+      name: 'trash',
+      component: () => import('../views/TrashView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 
 // Navigation guard
 router.beforeEach((to, _from, next) => {
   const token = localStorage.getItem('token')
+  const userStr = localStorage.getItem('user')
   const isAuthenticated = !!token
+
+  let isAdmin = false
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr)
+      isAdmin = user.roles?.includes('Admin') ?? false
+    } catch {
+      isAdmin = false
+    }
+  }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
   } else if (to.meta.requiresGuest && isAuthenticated) {
+    next('/dashboard')
+  } else if (to.meta.requiresAdmin && !isAdmin) {
     next('/dashboard')
   } else {
     next()

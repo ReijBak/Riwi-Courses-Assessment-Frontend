@@ -1,4 +1,8 @@
-version: '3.8'
+# Riwi Courses Assessment - Frontend Only
+# 
+# Este archivo solo levanta el frontend.
+# Para el sistema completo (Frontend + API + DB), usa:
+#   cd .. && docker compose up -d
 
 services:
   frontend:
@@ -7,61 +11,8 @@ services:
       dockerfile: Dockerfile
     container_name: riwi_courses_frontend
     ports:
-      - "3000:80"
+      - "3012:80"
     environment:
       - NODE_ENV=production
-    depends_on:
-      - api
-    networks:
-      - riwi-network
     restart: unless-stopped
-
-  api:
-    build:
-      context: ../Riwi-Courses-Assessment-Backend
-      dockerfile: Dockerfile
-    container_name: riwi_courses_api
-    ports:
-      - "5023:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
-      - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=RiwiCoursesDb;Username=riwi_user;Password=riwi_secret_2024
-      - JwtSettings__Secret=RiwiCoursesAssessmentSuperSecretKey2024ForJWTAuthentication!
-      - JwtSettings__Issuer=RiwiCoursesAPI
-      - JwtSettings__Audience=RiwiCoursesClient
-      - JwtSettings__ExpirationInHours=24
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - riwi-network
-    restart: unless-stopped
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: riwi_courses_db
-    environment:
-      - POSTGRES_DB=RiwiCoursesDb
-      - POSTGRES_USER=riwi_user
-      - POSTGRES_PASSWORD=riwi_secret_2024
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - riwi-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U riwi_user -d RiwiCoursesDb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
-networks:
-  riwi-network:
-    driver: bridge
-
-volumes:
-  postgres_data:
 

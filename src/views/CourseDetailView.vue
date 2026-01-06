@@ -17,6 +17,7 @@ const authStore = useAuthStore()
 const courseId = computed(() => route.params.id as string)
 const showLessonModal = ref(false)
 const editingLesson = ref<{ id: string; title: string; order: number } | null>(null)
+const showDeletedLessons = ref(false)
 
 onMounted(async () => {
   authStore.init()
@@ -28,6 +29,11 @@ async function loadCourseData() {
     courseStore.getCourseSummary(courseId.value),
     lessonStore.getLessonsByCourse(courseId.value),
   ])
+
+  // Load deleted lessons if Admin
+  if (authStore.isAdmin) {
+    await lessonStore.getDeletedLessonsByCourse(courseId.value)
+  }
 }
 
 function handleCreateLesson() {
@@ -76,6 +82,21 @@ function formatDate(dateString: string) {
 function getNextOrder() {
   if (lessonStore.lessons.length === 0) return 1
   return Math.max(...lessonStore.lessons.map((l) => l.order)) + 1
+}
+
+async function handleRestoreLesson(id: string) {
+  await lessonStore.restoreLesson(id, courseId.value)
+  await courseStore.getCourseSummary(courseId.value)
+}
+
+async function handleHardDeleteLesson(id: string) {
+  if (confirm('⚠️ This action cannot be undone. Are you sure you want to permanently delete this lesson?')) {
+    await lessonStore.hardDeleteLesson(id, courseId.value)
+  }
+}
+
+function toggleDeletedLessons() {
+  showDeletedLessons.value = !showDeletedLessons.value
 }
 </script>
 
@@ -182,6 +203,49 @@ function getNextOrder() {
           >
             Create first lesson
           </button>
+        </div>
+      </div>
+
+      <!-- Deleted Lessons Section (Admin Only) -->
+      <div v-if="authStore.isAdmin && lessonStore.deletedLessons.length > 0" class="bg-white rounded-2xl p-4 md:p-8 shadow-sm mt-6">
+        <div class="flex justify-between items-center mb-4">
+          <button
+            @click="toggleDeletedLessons"
+            class="flex items-center gap-2 text-lg font-semibold text-slate-800"
+          >
+            🗑️ Deleted Lessons ({{ lessonStore.deletedLessons.length }})
+            <span class="text-sm text-gray-500">{{ showDeletedLessons ? '▼' : '▶' }}</span>
+          </button>
+        </div>
+
+        <div v-if="showDeletedLessons" class="space-y-3">
+          <div
+            v-for="lesson in lessonStore.deletedLessons"
+            :key="lesson.id"
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-red-50 rounded-xl p-4 border border-red-100"
+          >
+            <div class="w-8 h-8 rounded-full bg-red-200 flex items-center justify-center text-red-600 font-bold text-sm shrink-0">
+              {{ lesson.order }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h4 class="font-semibold text-slate-800 truncate">{{ lesson.title }}</h4>
+              <p class="text-xs text-red-600">Deleted</p>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+              <button
+                @click="handleRestoreLesson(lesson.id)"
+                class="flex-1 sm:flex-none px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-lg transition-colors"
+              >
+                ♻️ Restore
+              </button>
+              <button
+                @click="handleHardDeleteLesson(lesson.id)"
+                class="flex-1 sm:flex-none px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-lg transition-colors"
+              >
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -129,17 +129,74 @@ export const useLessonStore = defineStore('lessons', () => {
     currentLesson.value = null
   }
 
+  // Admin only functions
+  const deletedLessons = ref<Lesson[]>([])
+
+  async function getDeletedLessonsByCourse(courseId: string): Promise<void> {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await api.get<Lesson[]>(`/lessons/course/${courseId}/deleted`)
+      deletedLessons.value = response.data
+    } catch (err: unknown) {
+      error.value = 'Error al cargar lecciones eliminadas'
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function restoreLesson(id: string, courseId: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+
+    try {
+      await api.patch(`/lessons/${id}/restore`)
+      await getLessonsByCourse(courseId)
+      await getDeletedLessonsByCourse(courseId)
+      return true
+    } catch (err: unknown) {
+      error.value = 'Error al restaurar la lección'
+      console.error(err)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function hardDeleteLesson(id: string, courseId: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+
+    try {
+      await api.delete(`/lessons/${id}/hard`)
+      await getDeletedLessonsByCourse(courseId)
+      return true
+    } catch (err: unknown) {
+      error.value = 'Error al eliminar permanentemente la lección'
+      console.error(err)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     lessons,
+    deletedLessons,
     currentLesson,
     loading,
     error,
     getLessonsByCourse,
+    getDeletedLessonsByCourse,
     getLesson,
     createLesson,
     updateLesson,
     deleteLesson,
     reorderLesson,
+    restoreLesson,
+    hardDeleteLesson,
     clearLessons,
   }
 })

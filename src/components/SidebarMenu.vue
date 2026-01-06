@@ -10,20 +10,34 @@ const authStore = useAuthStore()
 const isOpen = ref(false)
 const isMobile = ref(false)
 
-const menuItems = computed(() => [
-  {
-    name: 'Dashboard',
-    path: '/dashboard',
-    icon: '📊',
-    active: route.path === '/dashboard',
-  },
-  {
-    name: 'Courses',
-    path: '/courses',
-    icon: '📚',
-    active: route.path.startsWith('/courses'),
-  },
-])
+const menuItems = computed(() => {
+  const items = [
+    {
+      name: 'Dashboard',
+      path: '/dashboard',
+      icon: '📊',
+      active: route.path === '/dashboard',
+    },
+    {
+      name: 'Courses',
+      path: '/courses',
+      icon: '📚',
+      active: route.path.startsWith('/courses'),
+    },
+  ]
+
+  // Add Trash option only for Admin
+  if (authStore.isAdmin) {
+    items.push({
+      name: 'Trash',
+      path: '/trash',
+      icon: '🗑️',
+      active: route.path === '/trash',
+    })
+  }
+
+  return items
+})
 
 function checkMobile() {
   isMobile.value = window.innerWidth < 768

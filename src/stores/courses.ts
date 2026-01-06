@@ -165,8 +165,61 @@ export const useCourseStore = defineStore('courses', () => {
     }
   }
 
+  // Admin only functions
+  const deletedCourses = ref<Course[]>([])
+
+  async function getDeletedCourses(): Promise<void> {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await api.get<Course[]>('/courses/deleted')
+      deletedCourses.value = response.data
+    } catch (err: unknown) {
+      error.value = 'Error al cargar cursos eliminados'
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function restoreCourse(id: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+
+    try {
+      await api.patch(`/courses/${id}/restore`)
+      await getDeletedCourses()
+      return true
+    } catch (err: unknown) {
+      error.value = 'Error al restaurar el curso'
+      console.error(err)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function hardDeleteCourse(id: string): Promise<boolean> {
+    loading.value = true
+    error.value = null
+
+    try {
+      await api.delete(`/courses/${id}/hard`)
+      await getDeletedCourses()
+      return true
+    } catch (err: unknown) {
+      error.value = 'Error al eliminar permanentemente el curso'
+      console.error(err)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     courses,
+    deletedCourses,
     currentCourse,
     totalCount,
     totalPages,
@@ -182,6 +235,9 @@ export const useCourseStore = defineStore('courses', () => {
     deleteCourse,
     publishCourse,
     unpublishCourse,
+    getDeletedCourses,
+    restoreCourse,
+    hardDeleteCourse,
   }
 })
 
